@@ -1,6 +1,7 @@
 package com.cfrdocarmo.erp.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -46,7 +47,7 @@ public class Empresa implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 30)
 	private TipoEmpresa tipo;
-
+	
 	public Long getId() {
 		return id;
 	}

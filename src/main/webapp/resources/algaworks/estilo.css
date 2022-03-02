@@ -8,13 +8,26 @@ body {
 }
 
 header {
-	padding: 20px;
+	padding: 5px 0 0 0;
 	margin-bottom: 20px;
-	height: 30px;
+	height: 60px;
 	background-color: #545454;
 	color: #fff;
 	box-shadow: 0px 2px 2px #ccc
 }
+
+.logo {
+	height: 100%;
+	display: flex;
+	overflow: auto;
+	align-items: center;
+}
+
+.logo--img{
+	height: 15rem;
+	margin-left: -11px;
+}
+
 
 #conteudo {
 	padding: 0px 8px
