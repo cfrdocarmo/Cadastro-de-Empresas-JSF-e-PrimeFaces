@@ -1,6 +1,7 @@
 package com.cfrdocarmo.erp.controller;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.convert.Converter;
@@ -8,11 +9,14 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.context.RequestContext;
+
 import com.cfrdocarmo.erp.model.Empresa;
 import com.cfrdocarmo.erp.model.RamoAtividade;
 import com.cfrdocarmo.erp.model.TipoEmpresa;
 import com.cfrdocarmo.erp.repository.Empresas;
 import com.cfrdocarmo.erp.repository.RamoAtividades;
+import com.cfrdocarmo.erp.service.CadastroEmpresaService;
 import com.cfrdocarmo.erp.util.FacesMessages;
 
 @Named
@@ -30,11 +34,53 @@ public class GestaoEmpresasBean implements Serializable {
     @Inject
     private RamoAtividades ramoAtividades;
     
+    @Inject
+    private CadastroEmpresaService cadastroEmpresaService;
+    
     private List<Empresa> listaEmpresas;
     
     private String termoPesquisa;
     
     private Converter ramoAtividadeConverter;
+    
+    private Empresa empresa;
+    
+    public void prepararNovaEmpresa() {
+    	empresa = new Empresa();
+    }
+    
+    public void prepararEdicao() {
+    	ramoAtividadeConverter = new RamoAtividadeConverter(Arrays.asList(empresa.getRamoAtividade()));
+    }
+    
+    
+    public void salvar() {
+    	cadastroEmpresaService.salvar(empresa);
+    	
+    	atualizarRegistros();
+    	
+    	messages.info("Empresa salva com sucesso!");
+    	
+    	RequestContext.getCurrentInstance().update(Arrays.asList("frm:empresasDataTable", "frm:messages"));
+    }
+
+	public void atualizarRegistros() {
+		if(jaHouvePesquisa()) {
+    		pesquisar();
+    	} else {
+    		todasEmpresas();
+    	}
+	}
+    
+    public void excluir() {
+    	cadastroEmpresaService.excluir(empresa);
+    	
+    	empresa = null;
+    	
+    	atualizarRegistros();
+
+    	messages.info("Empresa excluída com sucesso!");
+    }
     
     public void pesquisar() {
         listaEmpresas = empresas.pesquisar(termoPesquisa);
@@ -56,6 +102,10 @@ public class GestaoEmpresasBean implements Serializable {
         return listaRamoAtividades;
     }
     
+    private boolean jaHouvePesquisa() {
+    	return termoPesquisa != null && !"".equals(termoPesquisa);
+    }
+    
     public List<Empresa> getListaEmpresas() {
         return listaEmpresas;
     }
@@ -75,4 +125,17 @@ public class GestaoEmpresasBean implements Serializable {
     public Converter getRamoAtividadeConverter() {
         return ramoAtividadeConverter;
     }
+    
+    public Empresa getEmpresa() {
+		return empresa;
+	}
+    
+    public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
+	}
+    
+    public boolean isEmpresaSelecionada() {
+    	return empresa != null && empresa.getId() != null;
+    }
+    
 }
